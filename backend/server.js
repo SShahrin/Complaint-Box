@@ -58,34 +58,37 @@ app.post('/api/complaints', async (req, res) => {
         res.status(500).json({ success: false, error: "Failed to save data" });
     }
 });
+// ৫. অভিযোগের স্ট্যাটাস আপডেট করার রুট
+app.put('/api/complaints/:id', async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body; // ফ্রন্টএন্ড থেকে 'Resolved' পাঠানো হবে
 
-// ২. রেজিস্ট্রেশন রুট
-app.post('/api/register', async (req, res) => {
-    const { name, email, password, studentId } = req.body;
     try {
-        const query = 'INSERT INTO users (name, email, password, studentId, role) VALUES (?, ?, ?, ?, ?)';
-        await db.run(query, [name, email, password, studentId, 'user']);
-        res.status(201).json({ success: true, message: "User Registered Successfully!" });
+        await db.run('UPDATE complaints SET status = ? WHERE id = ?', [status, id]);
+        res.json({ success: true, message: "Status updated successfully" });
     } catch (err) {
-        console.error("❌ Registration Error:", err);
-        res.status(400).json({ success: false, message: "Email already exists or DB Error" });
+        console.error("❌ Update Error:", err);
+        res.status(500).json({ success: false, message: "Failed to update status" });
     }
 });
+// ২. রেজিস্ট্রেশন রুট
 app.post('/api/register', async (req, res) => {
     const { name, email, password, studentId } = req.body;
     
     try {
-        // লজিক: যদি ইমেইলে 'admin' শব্দটা থাকে, তবে সে অ্যাডমিন হবে
-        let role = 'user';
-        if (email.includes('admin')) {
+        // এই লজিকটি ইউজার এবং অ্যাডমিন দুজনকে আলাদা করবে
+        let role = 'user'; // ডিফল্টভাবে সবাই ইউজার
+
+        // শুধুমাত্র যাদের ইমেইলে 'admin' শব্দটা থাকবে তারা অ্যাডমিন হবে
+        if (email.toLowerCase().includes('admin')) {
             role = 'admin';
         }
 
         const query = 'INSERT INTO users (name, email, password, studentId, role) VALUES (?, ?, ?, ?, ?)';
         await db.run(query, [name, email, password, studentId, role]);
         
-        console.log(`✅ New User Registered: ${name} as ${role}`);
-        res.status(201).json({ success: true, message: `Registered successfully as ${role}!` });
+        console.log(`✅ Registered: ${name} as ${role}`);
+        res.status(201).json({ success: true, message: `Registration Successful as ${role}!` });
     } catch (err) {
         console.error("❌ Registration Error:", err);
         res.status(400).json({ success: false, message: "Email already exists or DB Error" });
