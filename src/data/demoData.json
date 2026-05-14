@@ -1,0 +1,22 @@
+{
+  "complaints": [
+    {
+      "id": 1,
+      "facilityType": "Classroom",
+      "location": "Building B, Room 302",
+      "priority": "High",
+      "status": "pending",
+      "description": "The AC is making a loud noise and not cooling.",
+      "date": "2026-02-18"
+    },
+    {
+      "id": 2,
+      "facilityType": "Restroom",
+      "location": "Library 2nd Floor",
+      "priority": "Urgent",
+      "status": "in-progress",
+      "description": "Major water leak from the ceiling.",
+      "date": "2026-02-19"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+/* LIGHT MODE (Default) */
+:root {
+  --bg-main: #f8f9fa;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+
+  --primary: #7827e6;
+  --primary-light: #8d39ec;
+  --accent: #cf4ff6;
+  --accent-soft: #ea80fc;
+
+  --text-main: #344767;
+  --text-muted: #67748e;
+  --text-white: white;
+
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 8px 20px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 20px 40px 0 rgba(0, 0, 0, 0.05);
+  --shadow-bt: 0 4px 12px rgba(120, 39, 230, 0.4);
+  --gradient-primary: linear-gradient(310deg, #7928ca 0%, #ff0080 100%);
+}
+
+/* DARK MODE */
+[data-theme="dark"] {
+  --bg-main: #0f0f14;
+  --bg-secondary: #16161d;
+  --bg-card: #1d1d26;
+
+  --primary: #aa4ff6; /* ডার্ক মোডে একটু ব্রাইট পার্পল */
+  --primary-light: #ea80fc;
+  --accent: #cf4ff6;
+  --accent-soft: rgba(234, 128, 252, 0.15);
+
+  --text-main: #ffffff;
+  --text-muted: #b8b8c5;
+  --text-white: white;
+
+  --border-color: #2a2a35;
+  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 20px 27px 0 rgba(0, 0, 0, 0.3);
+}
+/* BASE STYLES */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--text-main);
+  background: var(--bg-main);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}

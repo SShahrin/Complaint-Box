@@ -1,0 +1,309 @@
+@media (max-width: 480px) {
+  .hero {
+    margin: 0 10px;
+    padding: 40px 15px;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+    padding: 10px;
+  }
+  .resolve-text {
+    margin-left: 0;
+    display: block;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  .hero-badge {
+    padding: 5px 12px;
+    font-size: 0.8rem;
+    margin-bottom: 12px;
+    /* Keeps the badge centered if your hero text is centered */
+    display: inline-flex;
+    align-items: center;
+  }
+  .hero-description {
+    font-size: 1rem;
+  }
+  .hero-buttons {
+    flex-direction: column; /* Stack buttons on tiny screens */
+    width: 100%;
+  }
+
+  .hero-buttons > * {
+    width: 100%; /* Make buttons full width */
+  }
+  .btn-large {
+    width: 100%;
+    text-align: center;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  /* ABOUT PAGE - DARK THEME */
+
+  .about-page-wrapper {
+    background: var(--bg-main);
+    min-height: 100vh;
+  }
+
+  /* Section */
+  .about-page-wrapper .about-section {
+    padding: 80px 20px;
+    background: var(--bg-main);
+  }
+
+  /* Title */
+  .about-page-wrapper .section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 60px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Content blocks */
+  .about-page-wrapper .about-block {
+    margin-bottom: 60px;
+  }
+
+  .about-page-wrapper h2 {
+    color: var(--primary);
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+  }
+
+  .about-page-wrapper p {
+    color: var(--text-muted);
+    line-height: 1.8;
+    font-size: 1.05rem;
+  }
+
+  /* Feature grid adjustment */
+  .about-page-wrapper .about-features {
+    margin-top: 30px;
+  }
+
+  .about-page-wrapper .feature-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+  }
+
+  .about-page-wrapper .feature-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 30px rgba(120, 39, 230, 0.2);
+  }
+
+  /* List */
+  .about-page-wrapper .about-list {
+    padding-left: 20px;
+  }
+
+  .about-page-wrapper .about-list li {
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  /* CTA */
+  .about-page-wrapper .about-cta {
+    margin-top: 60px;
+    padding: 60px 40px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(120, 39, 230, 0.3);
+  }
+
+  .about-page-wrapper .about-cta h2 {
+    color: white;
+    margin-bottom: 16px;
+  }
+
+  .about-page-wrapper .about-cta p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 30px;
+  }
+
+  .about-page-wrapper .about-cta-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .about-page-wrapper .about-outline-light {
+    border-color: white;
+    color: white;
+  }
+
+  .about-page-wrapper .about-outline-light:hover {
+    background: white;
+    color: var(--primary);
+  }
+
+  /* Contact */
+  .about-page-wrapper .about-contact {
+    margin-top: 60px;
+    padding: 40px;
+    background: var(--bg-card);
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+  }
+
+  .about-page-wrapper .about-contact h2 {
+    color: var(--primary);
+    margin-bottom: 20px;
+  }
+
+  .about-page-wrapper .about-contact p {
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .features-mini {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-body {
+    padding: 24px;
+  }
+  .campus-information {
+    margin: 0 20px;
+    gap: 20px;
+  }
+
+  .cta {
+    margin: 40px 20px;
+    padding: 40px 15px;
+    border-radius: 12px;
+  }
+  .footer {
+    padding: 40px 15px 20px;
+  }
+
+  .footer-grid {
+    /* Wrap items if they don't fit side-by-side */
+    flex-wrap: wrap;
+    gap: 30px;
+  }
+
+  .footer-section {
+    /* Allow sections to take up roughly half the width */
+    flex: 1 1 40%;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero {
+    margin: 0 20px; /* Reduce outer margin */
+    padding: 60px 20px;
+  }
+  .hero-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 30px;
+  }
+
+  .hero-content {
+    order: 1;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  .hero-badge {
+    padding: 6px 16px;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+  }
+  .hero-description {
+    margin: 0 auto 30px;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+  }
+
+  .hero-image-area {
+    order: 2;
+  }
+
+  .campus-information {
+    margin: 0 40px;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .cta {
+    margin: 60px 40px;
+    padding: 60px 20px;
+  }
+
+  .section-title,
+  .cta-title {
+    font-size: 1.8rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-page-wrapper .section-title {
+    font-size: 2rem;
+  }
+
+  .about-page-wrapper h2 {
+    font-size: 1.4rem;
+  }
+
+  .about-page-wrapper .about-cta {
+    padding: 30px;
+  }
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .complaint-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .nav {
+    gap: 8px;
+  }
+
+  .btn-primary,
+  .btn-outline {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+  .footer-grid {
+    /* Stack everything vertically */
+    flex-direction: column;
+    text-align: center;
+    gap: 40px;
+  }
+
+  .footer-section {
+    /* Ensure each section takes full width */
+    flex: 1 1 100%;
+  }
+
+  .footer-bottom {
+    margin-top: 20px;
+  }
+}

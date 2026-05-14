@@ -1,0 +1,178 @@
+/* AUTH CONTAINER */
+.auth-page {
+  background-image: url("/images/bgimg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* এটিই সেপারেশন বন্ধ করবে */
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  margin: 0px;
+  padding: 20px;
+}
+.auth-container {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* আইটেমগুলোকে উপর-নিচ (vertical) করবে */
+  align-items: center; /* আড়াআড়িভাবে মাঝখানে রাখবে */
+  justify-content: center; /* লম্বালম্বিভাবে মাঝখানে রাখবে */
+  gap: 20px; /* কার্ড এবং ফিচার-মিনির মাঝখানে গ্যাপ তৈরি করবে */
+  padding: 30px;
+  z-index: 1;
+}
+
+/* Background Layer */
+.auth-background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* এখানে আপনার পছন্দের ছবির লিঙ্ক দিন */
+}
+
+/* ইমেজের ওপর ডার্ক ওভারলে (যাতে ফর্মের টেক্সট পরিষ্কার বোঝা যায়) */
+.auth-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4); /* ৪০% ডার্কনেস */
+}
+
+/* আপনার আগের গ্রাডিয়েন্ট অর্বগুলো যদি রাখতে চান তবে নিচের স্টাইল দিন, নাহলে এগুলো ডিলিট করতে পারেন */
+.gradient-orb {
+  position: absolute;
+  filter: blur(50px);
+  opacity: 0.5;
+  z-index: 1; /* ইমেজের ওপরে থাকবে */
+}
+/* Card Layer */
+.auth-card {
+  position: relative;
+  z-index: 1;
+  /* হালকা ট্রান্সপারেন্ট ব্যাকগ্রাউন্ড */
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px); /* কার্ডের পেছনের ইমেজ ব্লার করবে */
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+}
+/* Title */
+.auth-card h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 1.8rem;
+}
+/* Inputs */
+.auth-card input {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 18px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-main);
+  font-size: 0.95rem;
+  outline: none;
+  transition: 0.3s ease;
+}
+.auth-card input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+}
+/* Submit button */
+.auth-card .btn-submit {
+  width: 100%;
+  margin-top: 10px;
+} /* ব্যাক-লিঙ্ক ফিক্স: অন্য সব স্টাইলকে ওভাররাইড করার জন্য */
+.auth-page .back-link {
+  position: relative !important;
+  z-index: 99 !important; /* ব্লার লেয়ারের উপরে আনার জন্য */
+  display: block !important;
+  width: fit-content !important;
+  max-width: 200px !important;
+  margin: 30px auto 0px !important;
+  padding: 12px 20px !important;
+
+  /* ব্যাকগ্রাউন্ড ও কালার */
+  background: var(--bg-secondary, #1a1a1a) !important;
+  color: var(--text-main, #ffffff) !important;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2)) !important;
+
+  border-radius: 8px !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  pointer-events: auto !important; /* ক্লিক নিশ্চিত করতে */
+}
+
+/* হোভার এফেক্ট ফিক্স */
+.auth-page .back-link:hover {
+  background: var(--primary, #7827e6) !important;
+  color: #fff !important;
+  border-color: var(--primary, #7827e6) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3) !important;
+}
+/* registration */
+.feature-mini {
+  /* আগের absolute পজিশন থাকলে তা মুছে ফেলুন */
+  position: relative;
+  top: unset;
+  left: unset;
+  transform: none;
+
+  width: 100%;
+  max-width: 400px; /* কার্ডের সমান উইডথ দিলে দেখতে সুন্দর লাগবে */
+  background: rgba(15, 15, 20, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  transition: 0.3s ease;
+}
+
+.feature-mini h4 {
+  margin: 0;
+  color: #ff66cc;
+  font-size: 1.1rem;
+}
+
+.feature-mini p {
+  margin: 5px 0 0;
+  font-size: 0.9rem;
+  color: #ddd;
+}
+
+.feature-mini:hover {
+  background: linear-gradient(135deg, #a64ca6, #ff66cc);
+  transform: translateY(-5px); /* হোভারে একটু উপরে উঠবে */
+  cursor: pointer;
+}
+
+/* CARDS AND INFO BOXES COLORS */
+.info-box {
+  background: linear-gradient(135deg, #7827e6 0%, #8d39ec 100%);
+  border: 1px solid #aa4ff6;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+}
+.info-box p {
+  color: white;
+}
+.demo-credentials {
+  background: linear-gradient(135deg, #8d39ec 0%, #7827e6 100%);
+  border: 1px solid #aa4ff6;
+  color: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 20px 0;
+}
