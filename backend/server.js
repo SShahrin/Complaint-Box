@@ -5,19 +5,25 @@ const { open } = require('sqlite');
 const path = require('path');
 
 const app = express();
-app.use(cors());
+
+// 💡 ফিক্সড CORS: অ্যাপ তৈরি করার ঠিক পরেই পারফেক্ট CORS পলিসি সেট করা হলো
+app.use(cors({
+    origin: ["https://complaint-box-main.vercel.app", "http://localhost:5173"], 
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}));
+
 app.use(express.json());
 
 let db;
 
 (async () => {
     try {
-const dbPath = path.resolve(__dirname, 'database.db');
-        
+        const dbPath = path.resolve(__dirname, 'database.db');
         console.log("📂 আপনার আসল ডাটাবেজ ফাইলটি এখানে আছে:", dbPath);
 
         db = await open({
-            filename: path.resolve(__dirname, 'database.db'), 
+            filename: dbPath, 
             driver: sqlite3.Database
         });
 
@@ -40,6 +46,7 @@ const dbPath = path.resolve(__dirname, 'database.db');
             );
         `);
         console.log("✅ Database Connected & Tables Ready!");
+        
         try {
             await db.exec(`ALTER TABLE complaints ADD COLUMN priority TEXT DEFAULT 'Normal'`);
             console.log("📊 Priority column successfully added to database!");
@@ -51,19 +58,12 @@ const dbPath = path.resolve(__dirname, 'database.db');
     }
 })();
 
-app.use(cors({
-    origin: ["https://complaint-box-main.vercel.app", "http://localhost:5173"], 
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true
-}));
-// ১. অভিযোগ জমা দেওয়ার রুট (হুবহু এক রাখা হয়েছে)// 
+// ১. অভিযোগ জমা দেওয়ার রুট
 app.post('/api/complaints', async (req, res) => {
-    const { student_name, topic, description, priority, status } = req.body; // 👈 priority যোগ হলো
-    
+    const { student_name, topic, description, priority, status } = req.body;
     console.log("Receiving Complaint:", req.body);
 
     try {
-        // কোয়েরিতে priority এবং একটি অতিরিক্ত '?' যোগ করা হয়েছে
         const query = 'INSERT INTO complaints (student_name, topic, description, priority, status) VALUES (?, ?, ?, ?, ?)';
         await db.run(query, [student_name, topic, description, priority || 'Normal', status || 'Pending']);
         res.status(201).json({ success: true, message: "Complaint saved successfully" });
@@ -73,14 +73,12 @@ app.post('/api/complaints', async (req, res) => {
     }
 });
 
-
-// ২. রেজিস্ট্রেশন রুট (আপনার অ্যাডমিন চেক করার লজিকসহ হুবহু এক)
+// ২. রেজিস্ট্রেশন রুট
 app.post('/api/register', async (req, res) => {
     const { name, email, password, studentId } = req.body;
     
     try {
         let role = 'user'; 
-
         if (email.toLowerCase().includes('admin')) {
             role = 'admin';
         }
@@ -96,7 +94,7 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-// ৩. লগইন রুট (হুবহু এক রাখা হয়েছে)
+// ৩. লগইন রুট
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
     try {
@@ -111,7 +109,7 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-// ৪. সব অভিযোগ দেখার রুট (হুবহু এক রাখা হয়েছে)
+// ৪. সব অভিযোগ দেখার রুট
 app.get('/api/complaints', async (req, res) => {
     try {
         const rows = await db.all('SELECT * FROM complaints');
@@ -121,7 +119,7 @@ app.get('/api/complaints', async (req, res) => {
     }
 });
 
-// ৪.১ নির্দিষ্ট স্টুডেন্টের সব অভিযোগ দেখার রুট (নতুন)
+// ৪.১ নির্দিষ্ট স্টুডেন্টের সব অভিযোগ দেখার রুট
 app.get('/api/complaints/student/:studentId', async (req, res) => {
     const { studentId } = req.params;
     try {
@@ -133,7 +131,7 @@ app.get('/api/complaints/student/:studentId', async (req, res) => {
     }
 });
 
- // ৫. অভিযোগের স্ট্যাটাস আপডেট করার রুট (শুধু এটিকে async/await এ ফিক্স করা হয়েছে)
+// ৫. অভিযোগের স্ট্যাটাস আপডেট করার রুট
 app.put('/api/complaints/:id', async (req, res) => {
     const id = parseInt(req.params.id, 10); 
     const { status } = req.body;
@@ -158,10 +156,10 @@ app.put('/api/complaints/:id', async (req, res) => {
     }
 });
 
-// USER EDIT: ইউজার তার নিজের কমপ্লেইন এডিট করবে (শুধুমাত্র Pending অবস্থায় থাকলে)
+// USER EDIT: ইউজার তার নিজের কমপ্লেইন এডিট করবে
 app.put('/api/complaints/user-edit/:id', async (req, res) => {
     const complaintId = parseInt(req.params.id, 10);
-    const { topic, description, priority } = req.body; // 👈 priority রিসিভ করা হলো
+    const { topic, description, priority } = req.body;
 
     try {
         const sql = `UPDATE complaints SET topic = ?, description = ?, priority = ? WHERE id = ?`;
@@ -179,15 +177,14 @@ app.put('/api/complaints/user-edit/:id', async (req, res) => {
     }
 });
 
-//  USER DELETE: ইউজার তার নিজের কমপ্লেইন ডিলিট/বাতিল করতে পারবে
+// USER DELETE: ইউজার তার নিজের কমপ্লেইন ডিলিট/বাতিল করতে পারবে
 app.delete('/api/complaints/:id', async (req, res) => {
-    const complaintId = parseInt(req.params.id, 10); // আইডিপাঠকে নাম্বার করে নেওয়া হলো
+    const complaintId = parseInt(req.params.id, 10);
 
     try {
         const sql = `DELETE FROM complaints WHERE id = ?`;
         const result = await db.run(sql, [complaintId]);
 
-        // যদি ডাটাবেজে এই আইডির কোনো কমপ্লেইন না থাকে
         if (result.changes === 0) {
             return res.status(404).json({ success: false, message: "No complaint found to delete" });
         }
@@ -200,7 +197,7 @@ app.delete('/api/complaints/:id', async (req, res) => {
     }
 });
 
-// ৬. স্টুডেন্টের প্রোফাইল আপডেট করার রুট (নতুন)
+// ৬. স্টুডেন্টের প্রোফাইল আপডেট করার রুট
 app.put('/api/users/update/:id', async (req, res) => {
     const id = parseInt(req.params.id, 10);
     const { name, studentId, oldName } = req.body; 
@@ -217,7 +214,6 @@ app.put('/api/users/update/:id', async (req, res) => {
 
         await db.run('UPDATE complaints SET student_name = ? WHERE student_name = ?', [name, oldName]);
 
-        // আপডেট হওয়া নতুন ডাটাবেস রো-টি নিয়ে আসা
         const updatedUser = await db.get('SELECT id, name, email, studentId, role FROM users WHERE id = ?', [id]);
 
         console.log(`✅ Profile and Complaints updated successfully for ID: ${id}`);
@@ -228,4 +224,7 @@ app.put('/api/users/update/:id', async (req, res) => {
         return res.status(500).json({ success: false, error: err.message });
     }
 });
-app.listen(5000, () => console.log("🚀 Server running on port 5000"));
+
+// Render অটোমেটিক পোর্ট অ্যাসাইন করে, তাই process.env.PORT দেওয়া বুদ্ধিমানের কাজ
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
