@@ -36,20 +36,27 @@ let db;
             );
         `);
         console.log("✅ Database Connected & Tables Ready!");
+        try {
+            await db.exec(`ALTER TABLE complaints ADD COLUMN priority TEXT DEFAULT 'Normal'`);
+            console.log("📊 Priority column successfully added to database!");
+        } catch (alterErr) {
+            console.log("ℹ️ Priority column already exists, moving on...");
+        }
     } catch (err) {
         console.error("❌ Database Error:", err);
     }
 })();
 
-// ১. অভিযোগ জমা দেওয়ার রুট (হুবহু এক রাখা হয়েছে)
+// ১. অভিযোগ জমা দেওয়ার রুট (হুবহু এক রাখা হয়েছে)// 
 app.post('/api/complaints', async (req, res) => {
-    const { student_name, topic, description, status } = req.body;
+    const { student_name, topic, description, priority, status } = req.body; // 👈 priority যোগ হলো
     
     console.log("Receiving Complaint:", req.body);
 
     try {
-        const query = 'INSERT INTO complaints (student_name, topic, description, status) VALUES (?, ?, ?, ?)';
-        await db.run(query, [student_name, topic, description, status || 'Pending']);
+        // কোয়েরিতে priority এবং একটি অতিরিক্ত '?' যোগ করা হয়েছে
+        const query = 'INSERT INTO complaints (student_name, topic, description, priority, status) VALUES (?, ?, ?, ?, ?)';
+        await db.run(query, [student_name, topic, description, priority || 'Normal', status || 'Pending']);
         res.status(201).json({ success: true, message: "Complaint saved successfully" });
     } catch (err) {
         console.error("❌ Complaint Insert Error:", err);
@@ -138,6 +145,48 @@ app.put('/api/complaints/:id', async (req, res) => {
 
     } catch (err) {
         console.error("❌ SQLite Error:", err.message);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// USER EDIT: ইউজার তার নিজের কমপ্লেইন এডিট করবে (শুধুমাত্র Pending অবস্থায় থাকলে)
+app.put('/api/complaints/user-edit/:id', async (req, res) => {
+    const complaintId = parseInt(req.params.id, 10);
+    const { topic, description, priority } = req.body; // 👈 priority রিসিভ করা হলো
+
+    try {
+        const sql = `UPDATE complaints SET topic = ?, description = ?, priority = ? WHERE id = ?`;
+        const result = await db.run(sql, [topic, description, priority || 'Normal', complaintId]);
+       
+        if (result.changes === 0) {
+            return res.status(404).json({ success: false, message: "Complaint not found with this ID" });
+        }
+
+        console.log(`✅ Complaint ID ${complaintId} updated successfully.`);
+        return res.json({ success: true, message: "Updated successfully" });
+    } catch (err) {
+        console.error("❌ Edit Error:", err.message);
+        return res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+//  USER DELETE: ইউজার তার নিজের কমপ্লেইন ডিলিট/বাতিল করতে পারবে
+app.delete('/api/complaints/:id', async (req, res) => {
+    const complaintId = parseInt(req.params.id, 10); // আইডিপাঠকে নাম্বার করে নেওয়া হলো
+
+    try {
+        const sql = `DELETE FROM complaints WHERE id = ?`;
+        const result = await db.run(sql, [complaintId]);
+
+        // যদি ডাটাবেজে এই আইডির কোনো কমপ্লেইন না থাকে
+        if (result.changes === 0) {
+            return res.status(404).json({ success: false, message: "No complaint found to delete" });
+        }
+
+        console.log(`🗑️ Complaint ID ${complaintId} deleted successfully.`);
+        return res.json({ success: true, message: "Deleted successfully" });
+    } catch (err) {
+        console.error("❌ Delete Error:", err.message);
         return res.status(500).json({ success: false, error: err.message });
     }
 });

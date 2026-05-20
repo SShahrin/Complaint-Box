@@ -16,7 +16,7 @@ const AdminProfile = () => {
   const fetchComplaints = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/complaints');
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/complaints`);
       if (response.data && Array.isArray(response.data)) {
         setComplaints(response.data);
       } else {
@@ -116,7 +116,7 @@ const AdminProfile = () => {
 const updateStatus = async (id, newStatus) => {
   try {
     // ব্যাকএন্ডে রিকোয়েস্ট পাঠানো হচ্ছে
-    const response = await axios.put(`http://localhost:5000/api/complaints/${id}`, {
+    const response = await axios.put(`${import.meta.env.VITE_API_URL}/api/complaints/${id}`, {
       status: newStatus
     });
 
@@ -303,17 +303,20 @@ const updateStatus = async (id, newStatus) => {
             </div>
             
             <table className="admin-table">
-             <thead>
+     <thead>
   <tr>
     <th>ID & Name</th>
     <th>Topic</th>
-    <th>Description</th> {/* 👈 এই হেডারটি ঠিক Topic এর পাশে বসিয়ে দিন */}
+    <th>Description</th>
+    <th>Priority</th>
     <th>Status</th>
     <th>Action</th>
   </tr>
 </thead>
-              <tbody>
-             {complaints.map(item => (
+        <tbody>
+           
+           
+        {complaints.map(item => (
   <tr key={item.id}>
     <td><b>#{item.id}</b><br/><small>{item.student_name || 'Unknown'}</small></td>
     <td>{item.topic}</td>
@@ -332,6 +335,25 @@ const updateStatus = async (id, newStatus) => {
     >
       {item.description || 'No description provided'}
     </td>
+{/* 💡 ডেসক্রিপশন td-এর ঠিক নিচে এই নতুন td-টুকু বসিয়ে দিন */}
+<td>
+  <span 
+    className={`priority-tag ${item.priority ? item.priority.toLowerCase() : 'normal'}`}
+    style={{
+      padding: '4px 8px',
+      borderRadius: '4px',
+      fontSize: '12px',
+      fontWeight: 'bold',
+      display: 'inline-block',
+      // আপনার CSS এ যদি ব্যাকগ্রাউন্ড কালার সেট করা না থাকে, তার জন্য নিচের সেফটি স্টাইল:
+      background: item.priority === 'High' ? '#f5365c20' : item.priority === 'Medium' ? '#feb01920' : '#2dce8920',
+      color: item.priority === 'High' ? '#f5365c' : item.priority === 'Medium' ? '#feb019' : '#2dce89'
+    }}
+  >
+    {item.priority || 'Normal'}
+  </span>
+</td>
+
 
     <td>
       <span className={`status-pill ${(item.status || 'pending').replace(/\s+/g, '-').toLowerCase()}`}>
@@ -379,11 +401,28 @@ const updateStatus = async (id, newStatus) => {
                         </span>
                       </div>
 
-                      <div style={{ margin: '20px 0' }}>
-                        <small style={{ color: '#adb5bd' }}>#{task.id}</small>
-                        <h3 style={{ margin: '5px 0', fontSize: '18px' }}>{task.topic}</h3>
-                        <p style={{ fontSize: '13px', color: '#525f7f' }}>Reported by: <b>{task.student_name || 'Student'}</b></p>
-                      </div>
+                   <div style={{ margin: '20px 0' }}>
+  <small style={{ color: '#adb5bd' }}>#{task.id}</small>
+  <h3 style={{ margin: '5px 0', fontSize: '18px' }}>{task.topic}</h3>
+  <p style={{ fontSize: '13px', color: '#525f7f', marginBottom: '8px' }}>Reported by: <b>{task.student_name || 'Student'}</b></p>
+  
+  {/* 📄 পেন্ডিং টাস্ক কার্ডের ভেতরে ডেসক্রিপশন (বিবরণ) যুক্ত করা হলো */}
+  <div 
+    style={{ 
+      fontSize: '13px', 
+      color: '#6b7280', 
+      background: '#f8f9fa', 
+      padding: '10px', 
+      borderRadius: '6px', 
+      marginTop: '8px',
+      maxHeight: '80px',
+      overflowY: 'auto',
+      borderLeft: '3px solid #cbd5e1'
+    }}
+  >
+    <strong>Description:</strong> {task.description || 'No description provided'}
+  </div>
+</div>
 
                       <div style={{ borderTop: '1px solid #f1f3f9', paddingTop: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <select className="status-update-select" value={task.status || 'Pending'} onChange={(e) => updateStatus(task.id, e.target.value)}>
@@ -399,7 +438,106 @@ const updateStatus = async (id, newStatus) => {
               </div>
             </div>
           );
+case 'Priority Tasks':
+  // ১. প্রথমে ডাটা ফিল্টার ও High -> Medium -> Low ক্রমে শর্ট (Sort) করার লজিক
+  const priorityOrder = { 'high': 1, 'medium': 2, 'normal': 3, 'low': 4 };
+  
+  const sortedPriorityTasks = complaints
+    .filter(c => c.status !== 'Resolved') // শুধুমাত্র যেগুলো এখনো সমাধান হয়নি
+    .sort((a, b) => {
+      const pA = (a.priority || 'Normal').toLowerCase();
+      const pB = (b.priority || 'Normal').toLowerCase();
+      return (priorityOrder[pA] || 3) - (priorityOrder[pB] || 3);
+    });
 
+  return (
+    <div className="admin-pending-container">
+      <div style={{ marginBottom: '20px' }}>
+        <h4 style={{ fontSize: '20px' }}>🔥 High Priority Grievances</h4>
+        <p style={{ color: '#8898aa' }}>Tasks sorted from High to Low priority for urgent attention</p>
+      </div>
+
+      <div className="admin-pending-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+        {sortedPriorityTasks.map(task => {
+          const currentPriority = task.priority ? task.priority.toLowerCase() : 'normal';
+          
+          // ২. প্রায়োরিটি অনুযায়ী ডাইনামিক রেডিশ এবং অন্যান্য কালার নির্ধারণ
+          let cardBg = 'rgba(255, 255, 255, 1)'; // ডিফল্ট সাদা ব্যাকগ্রাউন্ড
+          let accentColor = '#2dce89'; // Normal এর জন্য সবুজ
+          
+          if (currentPriority === 'high') {
+            cardBg = '#fff5f5'; // হালকা রেডিশ ব্যাকগ্রাউন্ড
+            accentColor = '#f5365c'; // গাঢ় লাল টোন
+          } else if (currentPriority === 'medium') {
+            cardBg = '#fffbeb'; // হালকা অরেঞ্জ/ইয়েলো ব্যাকগ্রাউন্ড
+            accentColor = '#feb019'; // কমলা টোন
+          }
+
+          return (
+            <motion.div 
+              key={task.id} 
+              whileHover={{ y: -5, boxShadow: '0 15px 35px rgba(0,0,0,0.1)' }} 
+              className="admin-info-card-neumorphic"
+              style={{
+                background: cardBg,
+                borderLeft: `5px solid ${accentColor}`, // বাম পাশে কালার দিয়ে আইডেন্টিফাই করা
+                padding: '20px'
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span className={`status-pill ${task.status ? task.status.replace(/\s+/g, '-').toLowerCase() : 'pending'}`}>
+                  {task.status || 'Pending'}
+                </span>
+                
+                {/* প্রায়োরিটি ট্যাগ কালার ডাইনামিক করা হলো */}
+                <span 
+                  style={{
+                    background: accentColor,
+                    color: '#fff',
+                    padding: '4px 10px',
+                    borderRadius: '20px',
+                    fontSize: '11px',
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  {task.priority || 'Normal'} {currentPriority === 'high' ? '🚨' : ''}
+                </span>
+              </div>
+
+              <div style={{ margin: '20px 0' }}>
+                <small style={{ color: '#adb5bd' }}>#{task.id}</small>
+                <h3 style={{ margin: '5px 0', fontSize: '18px', color: currentPriority === 'high' ? '#2d3748' : 'inherit' }}>
+                  {task.topic}
+                </h3>
+                <p style={{ fontSize: '13px', color: '#525f7f', marginBottom: '8px' }}>
+                  Reported by: <b>{task.student_name || 'Student'}</b>
+                </p>
+
+                {/* ডেসক্রিপশন বক্স */}
+                <div style={{ fontSize: '13px', color: '#6b7280', background: 'rgba(0,0,0,0.03)', padding: '10px', borderRadius: '6px', marginTop: '8px' }}>
+                  <strong>Description:</strong> {task.description || 'No description provided'}
+                </div>
+              </div>
+
+              <div style={{ borderTop: '1px solid rgba(0,0,0,0.05)', paddingTop: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <select className="status-update-select" value={task.status || 'Pending'} onChange={(e) => updateStatus(task.id, e.target.value)}>
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Resolved">Resolved</option>
+                </select>
+                <small style={{ color: '#8898aa' }}>{task.time || 'Urgent'}</small>
+              </div>
+            </motion.div>
+          );
+        })}
+
+        {sortedPriorityTasks.length === 0 && (
+          <div style={{ padding: '20px', color: '#8898aa' }}>No pending tasks available.</div>
+        )}
+      </div>
+    </div>
+  );
       case 'Resolved':
         return (
           <div className="admin-info-card-neumorphic" style={{ padding: '25px' }}>
@@ -530,6 +668,7 @@ const updateStatus = async (id, newStatus) => {
           <div className={`admin-nav-item ${activeTab === 'Dashboard' ? 'admin-active' : ''}`} onClick={() => setActiveTab('Dashboard')}>📊 Dashboard</div>
           <div className={`admin-nav-item ${activeTab === 'All Complaints' ? 'admin-active' : ''}`} onClick={() => setActiveTab('All Complaints')}>📩 All Complaints</div>
           <div className={`admin-nav-item ${activeTab === 'Pending Tasks' ? 'admin-active' : ''}`} onClick={() => setActiveTab('Pending Tasks')}>⏳ Pending Tasks</div>
+          <div className={`admin-nav-item ${activeTab === 'Priority Tasks' ? 'admin-active' : ''}`} onClick={() => setActiveTab('Priority Tasks')}>🔥 Priority Tasks</div>
           <div className={`admin-nav-item ${activeTab === 'Resolved' ? 'admin-active' : ''}`} onClick={() => setActiveTab('Resolved')}>✅ Resolved</div>
           <p className="admin-nav-group">ADMIN CONTROL</p>
           <div className={`admin-nav-item ${activeTab === 'Profile Settings' ? 'admin-active' : ''}`} onClick={() => setActiveTab('Profile Settings')}>👤 Profile Settings</div>
