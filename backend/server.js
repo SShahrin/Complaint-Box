@@ -12,8 +12,12 @@ let db;
 
 (async () => {
     try {
+const dbPath = path.resolve(__dirname, 'database.db');
+        
+        console.log("📂 আপনার আসল ডাটাবেজ ফাইলটি এখানে আছে:", dbPath);
+
         db = await open({
-            filename: path.join(__dirname, 'database.db'), 
+            filename: path.resolve(__dirname, 'database.db'), 
             driver: sqlite3.Database
         });
 
@@ -47,6 +51,11 @@ let db;
     }
 })();
 
+app.use(cors({
+    origin: ["https://complaint-box-main.vercel.app", "http://localhost:5173"], 
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}));
 // ১. অভিযোগ জমা দেওয়ার রুট (হুবহু এক রাখা হয়েছে)// 
 app.post('/api/complaints', async (req, res) => {
     const { student_name, topic, description, priority, status } = req.body; // 👈 priority যোগ হলো
