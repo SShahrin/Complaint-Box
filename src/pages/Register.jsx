@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Axios ইমপোর্ট করা হয়েছে
+import axios from 'axios';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -15,6 +15,9 @@ const Register = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [strength, setStrength] = useState({ width: '0%', color: '', text: '' });
 
+  // 💡 ব্যাকআপ ইউআরএল সেট করা হলো যেন ভুল ঠিকানা বা পোর্টে রিকোয়েস্ট না যায়
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
   // Input Change Handle করা
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,7 +28,7 @@ const Register = () => {
     }
   };
 
-  // পাসওয়ার্ডের শক্তি পরীক্ষা করা
+  // পাসওয়ার্ডের শক্তি পরীক্ষা করা
   const checkPasswordStrength = (pass) => {
     if (!pass) {
       setStrength({ width: '0%', color: '', text: '' });
@@ -62,28 +65,29 @@ const Register = () => {
     e.preventDefault();
     setMessage({ type: '', text: '' });
 
-    // ১. পাসওয়ার্ড কনফার্মেশন চেক
+    // ১. পাসওয়ার্ড কনফার্মেশন চেক
     if (formData.password !== formData.confirmPassword) {
-      setMessage({ type: 'error', text: 'পাসওয়ার্ড মিলছে না!' });
+      setMessage({ type: 'error', text: 'পাসওয়ার্ড মিলছে না!' });
       return;
     }
 
-    // ২. ইমেইল ভ্যালিডেশন (ঐচ্ছিক: আপনার ডোমেইন অনুযায়ী)
-    if (!formData.email.endsWith('@school.edu')) {
-      setMessage({ type: 'error', text: 'দয়া করে আপনার @school.edu ইমেইল ব্যবহার করুন।' });
+    // ২. ইমেইল ভ্যালিডেশন
+    if (!formData.email.toLowerCase().endsWith('@school.edu')) {
+      setMessage({ type: 'error', text: 'দয়া করে আপনার @school.edu ইমেইল ব্যবহার করুন।' });
       return;
     }
 
     try {
-      // ব্যাকএন্ড API-তে ডাটা পাঠানো
-     const response = await axios.post('${import.meta.env.VITE_API_URL}/api/register', {
-  name: formData.name,       
-  email: formData.email,
-  password: formData.password,
-  studentId: formData.studentId
-});
+      // ব্যাকএন্ড API-তে নিখুঁত ফরম্যাটে ডাটা পাঠানো
+      const response = await axios.post(`${API_BASE_URL}/api/register`, {
+        name: formData.name.trim(),       
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password,
+        studentId: formData.studentId.trim() // 👈 ডাটাবেজ কলামের সাথে ম্যাচ করে পাঠানো হচ্ছে
+      });
+
       if (response.data.success) {
-        setMessage({ type: 'success', text: '✓ রেজিস্ট্রেশন সফল! লগইন পেজে নিয়ে যাওয়া হচ্ছে...' });
+        setMessage({ type: 'success', text: '✓ রেজিস্ট্রেশন সফল! লগইন পেজে নিয়ে যাওয়া হচ্ছে...' });
         
         // ২ সেকেন্ড পর লগইন পেজে পাঠানো
         setTimeout(() => {
@@ -91,15 +95,14 @@ const Register = () => {
         }, 2000);
       }
     } catch (error) {
-      // সার্ভার থেকে আসা এরর মেসেজ দেখানো
+      // সার্ভার থেকে আসা সঠিক এরর মেসেজ দেখানো
       setMessage({ 
         type: 'error', 
-        text: error.response?.data?.message || 'রেজিস্ট্রেশন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।' 
+        text: error.response?.data?.message || 'রেজিস্ট্রেশন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।' 
       });
     }
   };
 
-  
   return (
     <div className="auth-page">
       <div className="auth-background">
@@ -227,14 +230,12 @@ const Register = () => {
           </div>
         </div>    
 
-    
-      
-         <div className="feature-mini">
-              <h4>✓Quick Registration</h4>
-              <p>Get started in less than a minute</p>
-          </div>
-            </div>    
-       <Link to="/" className="back-link">← Back to Home</Link>
+        <div className="feature-mini">
+          <h4>✓Quick Registration</h4>
+          <p>Get started in less than a minute</p>
+        </div>
+      </div>    
+      <Link to="/" className="back-link">← Back to Home</Link>
     </div>
   );
 };
