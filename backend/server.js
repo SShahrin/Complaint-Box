@@ -2,11 +2,16 @@ const express = require('express');
 const cors = require('cors');
 const sqlite3 = require('sqlite3');
 const { open } = require('sqlite');
+const os = require('os');
 const path = require('path');
+
 
 const app = express();
 
 // 💡 ফিক্সড CORS: অ্যাপ তৈরি করার ঠিক পরেই পারফেক্ট CORS পলিসি সেট করা হলো
+app.get('/', (req, res) => {
+  res.send('Server is running successfully!');
+});
 app.use(cors({
    
     origin: "*",
@@ -21,8 +26,8 @@ let db;
 
 (async () => {
     try {
-        const dbPath = path.resolve(__dirname, 'database.db');
-        console.log("📂 আপনার আসল ডাটাবেজ ফাইলটি এখানে আছে:", dbPath);
+        const dbPath = path.resolve(__dirname, 'database.sqlite');        
+        console.log("📂 Database path:", dbPath);
 
         db = await open({
             filename: dbPath, 
@@ -228,7 +233,8 @@ app.put('/api/users/update/:id', async (req, res) => {
 });
 
 // Render অটোমেটিক পোর্ট অ্যাসাইন করে, তাই process.env.PORT দেওয়া বুদ্ধিমানের কাজ
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+const PORT = process.env.PORT || 10000; 
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server is running on port ${PORT}`);
 });

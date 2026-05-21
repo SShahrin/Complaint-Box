@@ -16,7 +16,7 @@ const AdminProfile = () => {
   const fetchComplaints = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/complaints`);
+      const response = await axios.get(`https://complaint-box-gx87.onrender.com/api/complaints`);
       if (response.data && Array.isArray(response.data)) {
         setComplaints(response.data);
       } else {
@@ -116,7 +116,7 @@ const AdminProfile = () => {
   // স্ট্যাটাস পরিবর্তন করার নিরাপদ ফাংশন
   const updateStatus = async (id, newStatus) => {
     try {
-      const response = await axios.put(`${import.meta.env.VITE_API_URL}/api/complaints/${id}`, {
+      const response = await axios.put(`https://complaint-box-gx87.onrender.com/api/complaints/${id}`, {
         status: newStatus
       });
 
@@ -131,6 +131,19 @@ const AdminProfile = () => {
     } catch (error) {
       console.error("Error updating status:", error);
       alert("Failed to update status in database");
+    }
+  };
+
+  const deleteComplaint = async (id) => {
+    if (window.confirm("Are you sure you want to delete this complaint?")) {
+      try {
+        await axios.delete(`https://complaint-box-gx87.onrender.com/api/complaints/${id}`);
+        setComplaints(prev => prev.filter(item => (item.id !== id && item._id !== id)));
+        alert("Complaint deleted successfully.");
+      } catch (error) {
+        console.error("Error deleting complaint:", error);
+        alert("Failed to delete the complaint. Please try again.");
+      }
     }
   };
 
@@ -247,6 +260,7 @@ const AdminProfile = () => {
               >
                 <h4 style={{ marginBottom: '20px' }}>Overview Graph</h4>
                 <div style={{ width: '100%', height: '280px', position: 'relative' }}>
+                  {monthlyData && monthlyData.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={monthlyData}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eee" />
@@ -258,6 +272,9 @@ const AdminProfile = () => {
                       <Bar dataKey="pending" fill="#7928ca" radius={[4, 4, 0, 0]} barSize={25} />
                     </BarChart>
                   </ResponsiveContainer>
+                  ) : (
+      <p style={{ textAlign: 'center', marginTop: '100px' }}>No data available</p>
+    )}
                 </div>
               </motion.div>
 
@@ -270,6 +287,7 @@ const AdminProfile = () => {
               >
                 <h4 style={{ marginBottom: '20px' }}>Resolution Status</h4>
                 <div style={{ width: '100%', height: '280px', position: 'relative' }}>
+                 {pieData && pieData.length > 0 ? (
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
@@ -281,6 +299,9 @@ const AdminProfile = () => {
                       <Legend verticalAlign="bottom" height={36}/>
                     </PieChart>
                   </ResponsiveContainer>
+                ) : (
+      <p style={{ textAlign: 'center', marginTop: '100px' }}>No data available</p>
+    )}
                 </div>
               </motion.div>
             </div>
@@ -362,6 +383,21 @@ const AdminProfile = () => {
                           <option value="In Progress">In Progress</option>
                           <option value="Resolved">Resolved</option>
                         </select>
+                        <button 
+    onClick={() => deleteComplaint(itemId)}
+    style={{ 
+      background: '#ff4d4f', 
+      color: 'white', 
+      border: 'none', 
+      padding: '5px 10px', 
+      borderRadius: '5px', 
+      cursor: 'pointer',
+      marginTop: '5px',
+      display: 'block' 
+    }}
+  >
+    Delete
+  </button>
                       </td>
                     </tr>
                   );
