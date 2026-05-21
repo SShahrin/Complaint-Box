@@ -17,7 +17,7 @@ const Register = () => {
 
   // 💡 ব্যাকআপ ইউআরএল সেট করা হলো যেন ভুল ঠিকানা বা পোর্টে রিকোয়েস্ট না যায়
 // এটাকে এমন করে দাও যাতে সে সরাসরি তোমার Render লিঙ্কটিই পায়:
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://complaint-box-gx87.onrender.com';
+const API_BASE_URL = 'https://complaint-box-gx87.onrender.com';
   // Input Change Handle করা
   const handleChange = (e) => {
     const { name, value } = e.target;
