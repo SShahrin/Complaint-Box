@@ -10,12 +10,13 @@ const Login = () => {
 
   // 💡 ব্যাকআপ ইউআরএল সেট করা হলো যেন লোকালহোস্টে পোর্ট মিস না হয়
 // এটাকে এমন করে দাও যাতে সে সরাসরি তোমার Render লিঙ্কটিই পায়:
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://complaint-box-gx87.onrender.com';
+const API_BASE_URL =  'https://complaint-box-gx87.onrender.com';
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
-console.log("কানেক্ট হচ্ছে এই লিঙ্কে:", import.meta.env.VITE_API_URL || 'https://complaint-box-gx87.onrender.com');
-    try {
+   console.log("Attempting to connect to:", API_BASE_URL);
+
+try {
         // ডাটা পাঠানোর সময় ইমেইলটি ছোট হাতের (toLowerCase) করে ট্রিম করে পাঠানো হচ্ছে
         const response = await axios.post(`${API_BASE_URL}/api/login`, { 
             email: email.trim().toLowerCase(), 

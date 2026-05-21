@@ -78,7 +78,7 @@ const handleSubmit = async (e) => {
     }
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'https://complaint-box-gx87.onrender.com';
+      const API_URL =  'https://complaint-box-gx87.onrender.com';
       
       const response = await axios.post(`${API_URL}/api/register`, {
         name: formData.name.trim(),

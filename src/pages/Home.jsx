@@ -25,7 +25,7 @@ const Home = () => {
 
       <section className="landing-page">
         {/* Hero Section */}
-       <section class="hero">
+       <section className="hero">
            
         <div className="hero-container">
 
@@ -38,7 +38,7 @@ const Home = () => {
               Making Campus Better, One Report at a Time
             </div>
             <h1 className="hero-title">
-              Report • Track • <span class="resolve-text">Resolve</span>
+              Report • Track • <span className="resolve-text">Resolve</span>
               <br />Your voice
               <span className="resolve-text"> Real action </span>
             </h1>
@@ -185,15 +185,15 @@ const Home = () => {
       </section>
 
       {/* Footer */}
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-grid">
-          <div class="footer-section">
+    <footer className="footer">
+      <div className="container">
+        <div className="footer-grid">
+          <div className="footer-section">
             <h3>Complaint Box</h3>
             <p>Making campus facilities better, one report at a time.</p>
           </div>
 
-          <div class="footer-section">
+          <div className="footer-section">
             <h4>Quick Links</h4>
             <ul>
               <li><a href="about.html">About Us</a></li>
@@ -202,7 +202,7 @@ const Home = () => {
             </ul>
           </div>
 
-          <div class="footer-section">
+          <div className="footer-section">
             <h4>Contact</h4>
             <ul>
               <li>Email: support@school.edu</li>
@@ -212,7 +212,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div class="footer-bottom">
+        <div className="footer-bottom">
           <p>&copy; 2026 Complaint Box. All rights reserved.</p>
         </div>
       </div>
