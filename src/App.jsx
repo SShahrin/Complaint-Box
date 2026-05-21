@@ -14,7 +14,7 @@ import Register from './pages/Register';
 import About from './pages/About';
 import Dashboard from './pages/Dashboard';
 import AdminProfile from "./pages/AdminProfile";
-
+// fix
 function App() {
   return (
     <Router>
