@@ -206,10 +206,11 @@
 /* INFO CARD */
 .admin-middle-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  width: 100%;       /* এটা নিশ্চিত করুন */
-  min-width: 0;      /* খুবই গুরুত্বপূর্ণ */
+  grid-template-columns: 2fr 1fr;
+  gap: 25px;
+  margin-bottom: 30px;
+  width: 100%;
+  min-height: 300px;
 }
 /* ROCKET CARD */
 .admin-rocket-card {

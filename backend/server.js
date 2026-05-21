@@ -22,49 +22,16 @@ app.use(cors({
 
 app.use(express.json());
 
-let db;
-
-(async () => {
+let db; // গ্লোবাল ভেরিয়েবল হিসেবে ডিক্লেয়ার করুন
+app.get('/api/debug-data', async (req, res) => {
     try {
-        const dbPath = path.resolve(__dirname, 'database.sqlite');        
-        console.log("📂 Database path:", dbPath);
-
-        db = await open({
-            filename: dbPath, 
-            driver: sqlite3.Database
-        });
-
-        await db.exec(`
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT,
-                email TEXT UNIQUE,
-                studentId TEXT,
-                password TEXT,
-                role TEXT DEFAULT 'user'
-            );
-
-            CREATE TABLE IF NOT EXISTS complaints (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                student_name TEXT,
-                topic TEXT,
-                description TEXT,
-                status TEXT DEFAULT 'Pending'
-            );
-        `);
-        console.log("✅ Database Connected & Tables Ready!");
-        
-        try {
-            await db.exec(`ALTER TABLE complaints ADD COLUMN priority TEXT DEFAULT 'Normal'`);
-            console.log("📊 Priority column successfully added to database!");
-        } catch (alterErr) {
-            console.log("ℹ️ Priority column already exists, moving on...");
-        }
+        const users = await db.all('SELECT * FROM users');
+        const complaints = await db.all('SELECT * FROM complaints');
+        res.json({ users, complaints });
     } catch (err) {
-        console.error("❌ Database Error:", err);
+        res.status(500).json({ error: err.message });
     }
-})();
-
+});
 // ১. অভিযোগ জমা দেওয়ার রুট
 app.post('/api/complaints', async (req, res) => {
     const { student_name, topic, description, priority, status } = req.body;
@@ -83,7 +50,7 @@ app.post('/api/complaints', async (req, res) => {
 // ২. রেজিস্ট্রেশন রুট
 app.post('/api/register', async (req, res) => {
     const { name, email, password, studentId } = req.body;
-    
+    console.log("Saving to DB:", { name, email, password, studentId });
     try {
         let role = 'user'; 
         if (email.toLowerCase().includes('admin')) {
@@ -236,11 +203,40 @@ app.put('/api/users/update/:id', async (req, res) => {
 
 const PORT = process.env.PORT || 10000;
 
-// ডাটাবেস কানেকশন এবং সার্ভার স্টার্ট করার জন্য ফাংশন
 async function startServer() {
     try {
-        console.log("⏳ Starting server and connecting to database...");
-    
+        const dbPath = path.resolve(__dirname, 'database.sqlite');
+        console.log("📂 Database path:", dbPath);
+
+        // ১. ডাটাবেস ওপেন করুন
+        db = await open({
+            filename: dbPath,
+            driver: sqlite3.Database
+        });
+
+        // ২. টেবিল তৈরি করুন
+        await db.exec(`
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                email TEXT UNIQUE,
+                studentId TEXT,
+                password TEXT,
+                role TEXT DEFAULT 'user'
+            );
+
+            CREATE TABLE IF NOT EXISTS complaints (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                student_name TEXT,
+                topic TEXT,
+                description TEXT,
+                status TEXT DEFAULT 'Pending',
+                priority TEXT DEFAULT 'Normal'
+            );
+        `);
+        console.log("✅ Database Connected & Tables Ready!");
+
+        // ৩. সার্ভার লিসেন করুন
         app.listen(PORT, '0.0.0.0', () => {
             console.log(`🚀 Server is running on port ${PORT}`);
         });
@@ -250,4 +246,5 @@ async function startServer() {
     }
 }
 
+// ফাংশনটি কল করুন
 startServer();
