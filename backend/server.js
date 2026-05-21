@@ -232,9 +232,22 @@ app.put('/api/users/update/:id', async (req, res) => {
     }
 });
 
-// Render অটোমেটিক পোর্ট অ্যাসাইন করে, তাই process.env.PORT দেওয়া বুদ্ধিমানের কাজ
-const PORT = process.env.PORT || 10000; 
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+
+const PORT = process.env.PORT || 10000;
+
+// ডাটাবেস কানেকশন এবং সার্ভার স্টার্ট করার জন্য ফাংশন
+async function startServer() {
+    try {
+        console.log("⏳ Starting server and connecting to database...");
+    
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`🚀 Server is running on port ${PORT}`);
+        });
+
+    } catch (err) {
+        console.error("❌ Failed to start server:", err);
+    }
+}
+
+startServer();
