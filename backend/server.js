@@ -8,7 +8,9 @@ const app = express();
 
 // 💡 ফিক্সড CORS: অ্যাপ তৈরি করার ঠিক পরেই পারফেক্ট CORS পলিসি সেট করা হলো
 app.use(cors({
-    origin: ["https://complaint-box-main.vercel.app", "http://localhost:5173"], 
+   
+    origin: "*",
+    // origin: ["https://complaint-box-main.vercel.app", "http://localhost:5173"], 
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));
@@ -227,4 +229,6 @@ app.put('/api/users/update/:id', async (req, res) => {
 
 // Render অটোমেটিক পোর্ট অ্যাসাইন করে, তাই process.env.PORT দেওয়া বুদ্ধিমানের কাজ
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

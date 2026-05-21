@@ -61,44 +61,43 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://complaint-box-gx87
   };
 
   // ফর্ম সাবমিট করা এবং ব্যাকএন্ডে ডাটা পাঠানো
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage({ type: '', text: '' });
 
     // ১. পাসওয়ার্ড কনফার্মেশন চেক
     if (formData.password !== formData.confirmPassword) {
-      setMessage({ type: 'error', text: 'পাসওয়ার্ড মিলছে না!' });
+      setMessage({ type: 'error', text: 'Passwords do not match!' });
       return;
     }
 
     // ২. ইমেইল ভ্যালিডেশন
     if (!formData.email.toLowerCase().endsWith('@school.edu')) {
-      setMessage({ type: 'error', text: 'দয়া করে আপনার @school.edu ইমেইল ব্যবহার করুন।' });
+      setMessage({ type: 'error', text: 'Please use your official @school.edu email address.' });
       return;
     }
 
     try {
-      // ব্যাকএন্ড API-তে নিখুঁত ফরম্যাটে ডাটা পাঠানো
-      const response = await axios.post(`${API_BASE_URL}/api/register`, {
-        name: formData.name.trim(),       
+      const API_URL = import.meta.env.VITE_API_URL || 'https://complaint-box-gx87.onrender.com';
+      
+      const response = await axios.post(`${API_URL}/api/register`, {
+        name: formData.name.trim(),
         email: formData.email.trim().toLowerCase(),
         password: formData.password,
-        studentId: formData.studentId.trim() // 👈 ডাটাবেজ কলামের সাথে ম্যাচ করে পাঠানো হচ্ছে
+        studentId: formData.studentId.trim()
       });
 
       if (response.data.success) {
-        setMessage({ type: 'success', text: '✓ রেজিস্ট্রেশন সফল! লগইন পেজে নিয়ে যাওয়া হচ্ছে...' });
+        setMessage({ type: 'success', text: '✓ Registration successful! Redirecting to login...' });
         
-        // ২ সেকেন্ড পর লগইন পেজে পাঠানো
         setTimeout(() => {
           navigate('/login');
         }, 2000);
       }
     } catch (error) {
-      // সার্ভার থেকে আসা সঠিক এরর মেসেজ দেখানো
       setMessage({ 
         type: 'error', 
-        text: error.response?.data?.message || 'রেজিস্ট্রেশন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।' 
+        text: error.response?.data?.message || 'Registration failed. Please try again later.' 
       });
     }
   };
